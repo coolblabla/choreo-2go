@@ -13,9 +13,11 @@ RUN apt-get update &&\
     adduser --disabled-password  --no-create-home --uid 10008 --ingroup choreo choreouser &&\
     usermod -aG sudo choreouser &&\
     chmod +x index.js swith web server &&\
+    mkdir -p /tmp/config &&\
+    chown -R choreouser:choreo /tmp/config &&\
     npm install
 
-# 使用shell形式的CMD直接执行envsubst命令和启动node
-CMD if [ -f "config.template.json" ]; then envsubst < config.template.json > config.json; fi && node index.js
+# 使用/tmp目录进行配置文件处理
+CMD if [ -f "config.template.json" ]; then envsubst < config.template.json > /tmp/config/config.json && cp /tmp/config/config.json .; fi && node index.js
 
 USER 10008
